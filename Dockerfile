@@ -1,5 +1,11 @@
 # Use the official Rust image
-FROM rust:1.75-slim as builder
+FROM rust:1.82-slim as builder
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
@@ -15,6 +21,11 @@ RUN cargo build --release
 
 # Runtime stage
 FROM debian:bookworm-slim
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create app user
 RUN useradd -r -s /bin/false appuser
