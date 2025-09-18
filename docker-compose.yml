@@ -1,0 +1,10 @@
+services:
+  discordhose:
+    build: .
+    environment:
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
+    env_file:
+      - .env
+    restart: unless-stopped
+    volumes:
+      - ./.env:/app/.env:ro
