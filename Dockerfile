@@ -16,11 +16,6 @@ RUN cargo build --release
 # Runtime stage
 FROM debian:bookworm-slim
 
-# Install runtime dependencies
-RUN apt-get update && apt-get install -y \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
-
 # Create app user
 RUN useradd -r -s /bin/false appuser
 
@@ -35,9 +30,6 @@ RUN chown -R appuser:appuser /app
 
 # Switch to app user
 USER appuser
-
-# Expose port (if needed in the future)
-EXPOSE 8080
 
 # Run the application
 CMD ["./discordhose"]
