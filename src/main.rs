@@ -5,7 +5,7 @@ use rocketman::{
     connection::JetstreamConnection, handler, ingestion::LexiconIngestor,
     options::JetstreamOptions, types::event::Event,
 };
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 use std::{
     collections::HashMap,
     sync::{Arc, Mutex},
@@ -20,6 +20,9 @@ async fn main() {
     let opts = JetstreamOptions::builder()
         // your EXACT nsids
         .wanted_collections(vec!["fm.teal.alpha.feed.play".to_string()])
+        .ws_url(rocketman::endpoints::JetstreamEndpoints::Custom(
+            "wss://jetstream1.us-east.fire.hose.cam/subscribe".to_string(),
+        ))
         .build();
     // create the jetstream connector
     let jetstream = JetstreamConnection::new(opts);
