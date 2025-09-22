@@ -1,0 +1,13 @@
+when:
+  - event: ["push"]
+    branch: ["master"]
+
+engine: "nixery"
+
+dependencies:
+  nixpkgs:
+    - cargo
+
+steps:
+  - name: "Build Rust project"
+    command: "cargo build"
