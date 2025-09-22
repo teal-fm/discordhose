@@ -114,7 +114,7 @@ impl LexiconIngestor for MyCoolIngestor {
 
         let payload = json!({
             "content": format!("{} is listening to {}", handle, track_info),
-            "allowed_mentions": [],
+            "allowed_mentions": { "parse": [] },
         });
         let response = client.post(url).json(&payload).send().await?;
 
