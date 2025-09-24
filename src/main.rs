@@ -84,11 +84,11 @@ impl LexiconIngestor for MyCoolIngestor {
         let client = Client::new();
         let url = std::env::var("DISCORD_WEBHOOK_URL")
             .expect("DISCORD_WEBHOOK_URL environment variable must be set");
-        
+
         // Get resolver app view URL from environment
         let resolver_app_view = std::env::var("RESOLVER_APP_VIEW")
             .unwrap_or_else(|_| "https://bsky.social".to_string());
-        
+
         // Safely extract track name and artist from the record
         let track_info = message
             .commit
@@ -102,6 +102,12 @@ impl LexiconIngestor for MyCoolIngestor {
             })
             .unwrap_or_else(|| "unknown track".to_string());
 
+        let submission_client_agent = message
+            .commit
+            .as_ref()
+            .and_then(|commit| commit.record.as_ref())
+            .and_then(|record| record.get("submissionClientAgent")?.as_str());
+
         // Resolve the handle from the DID
         let handle = match resolve::resolve_identity(&message.did, &resolver_app_view).await {
             Ok(resolved) => resolved.identity,
@@ -113,7 +119,7 @@ impl LexiconIngestor for MyCoolIngestor {
         };
 
         let payload = json!({
-            "content": format!("{} is listening to {}", handle, track_info),
+            "content": format!("{} is listening to {} via `{}`", handle, track_info, submission_client_agent.unwrap_or("unknown client")),
             "allowed_mentions": { "parse": [] },
         });
         let response = client.post(url).json(&payload).send().await?;
